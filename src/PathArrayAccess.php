@@ -67,6 +67,10 @@ class PathArrayAccess implements \ArrayAccess {
 	 * @return PathArrayAccess $this
 	 */
 	final public function set ($path, $value, $force = FALSE){
+		if ($path === NULL || !strlen($path)){
+			$this->array = (array) $value;
+			return $this;
+		}
 		$pathParts = $this->getPathParts($path);
 		$reference = &$this->array;
 		foreach ($pathParts as $pathPart){
@@ -74,7 +78,7 @@ class PathArrayAccess implements \ArrayAccess {
 				if ($force){
 					$reference = array();
 				} else {
-					throw new \Exception("Illegal path part '$path'!", 1420314548);
+					throw new \InvalidArgumentException("Illegal path part '$path'!", 1420314548);
 				}
 			}
 			if (isset($reference[$pathPart])){
@@ -103,7 +107,7 @@ class PathArrayAccess implements \ArrayAccess {
 				$reference = &$reference[$pathPart];
 				$value = $reference;
 			} else {
-				break;
+				return $default;
 			}
 		}
 		return $value;

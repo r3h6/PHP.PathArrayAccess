@@ -73,14 +73,25 @@ class PathArrayAccessTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException Exception
+	 * @expectedException InvalidArgumentException
 	 */
 	public function testException (){
 		$this->subject->set('c.ca.caa', 'CCA');
 	}
 
-	public function testSet (){
-		$this->subject->set('c.ca.caa', 'CCA', TRUE);
+	public function testPathNull (){
+		$this->subject->set(NULL, $this->example);
+		$this->assertEquals($this->example, $this->subject->toArray());
+	}
+
+	public function testPathEmpty (){
+		$this->subject->set('', $this->example);
+		$this->assertEquals($this->example, $this->subject->toArray());
+	}
+
+	public function testPathEmptyTypeCast (){
+		$this->subject->set('', 'A');
+		$this->assertEquals(array('A'), $this->subject->toArray());
 	}
 
 	public function testSetGet (){
@@ -88,6 +99,11 @@ class PathArrayAccessTest extends \PHPUnit_Framework_TestCase {
 		$path = 'c.ca.caa';
 		$this->subject->set($path, $expected, TRUE);
 		$this->assertEquals($expected, $this->subject->get($path));
+	}
+
+	public function testDefault (){
+		$expected = TRUE;
+		$this->assertEquals($expected, $this->subject->get('a.aa.aaa', $expected));
 	}
 }
 
